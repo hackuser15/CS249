@@ -62,13 +62,13 @@ ann_textItems_new = pd.DataFrame(rows, columns=['docid','token','tokenid','occur
 ann_textItems_new['label']= ann_textItems_new.apply (lambda row: assignProductLabel (row),axis=1)
 ann_textItems_new['dummy']= ann_textItems_new.apply (lambda row: assignDummyProductLabel (row),axis=1)
 stop = stopwords.words('english')
-indexes = [];
+indexes = []
 for i in range(0, len(ann_textItems_new['token'])):
     text = ann_textItems_new['token'][i]
+    text = text.lower()
     if text in stop:
         indexes.append(i)
         continue
-    text = text.lower()
     text = BeautifulSoup(text,"lxml").get_text()
     text = "".join([ch for ch in text if ch not in string.punctuation])
     if not text:
