@@ -1,5 +1,11 @@
 import json
+
 import pandas as pd
+import string
+from bs4 import BeautifulSoup
+
+from nltk.corpus import stopwords
+
 
 def assignProductLabel(row):
     if(row['token'] in product_terms):
@@ -47,6 +53,21 @@ ann_textItems_new['label']= ann_textItems_new.apply (lambda row: assignProductLa
 ann_textItems_new['dummy']= ann_textItems_new.apply (lambda row: assignDummyProductLabel (row),axis=1)
 stanford_train = ann_textItems_new[['token','label']]
 stanford_test = ann_textItems_new[['token','dummy']]
+
+#Data cleaning
+stop = stopwords.words('english')
+indexes = []
+for i in range(0, len(ann_textItems_new['token'])):
+    text = ann_textItems_new['token'][i]
+    text = text.lower()
+    if text in stop or text in string.punctuation:
+        indexes.append(i)
+        continue
+    text = BeautifulSoup(text,"lxml").get_text()
+    text = "".join([ch for ch in text if ch not in string.punctuation])
+    if not text:
+        indexes.append(i)
+ann_textItems_new.drop(ann_textItems_new.index[indexes],inplace=True)
 
 stanford_train.to_csv('ner_stanford_train_product_new2', sep=' ', header=False , index=False)  #Training data for model
 stanford_test.to_csv('ner_stanford_test_product_new2', sep=' ', header=False , index=False)    #dummy data testing on training set
