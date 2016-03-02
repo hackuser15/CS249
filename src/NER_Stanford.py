@@ -3,19 +3,47 @@
 # Set Environment Variable JAVA_HOME to point to java installation directory e.g. C:\Program Files\Java\jre1.8.0_66
 # Output: [('Akshay', 'PERSON'), ('Shinde', 'PERSON'), ('is', 'O'), ('studying', 'O'), ('at', 'O'), ('University', 'ORGANIZATION'),
 #           ('of', 'ORGANIZATION'), ('California', 'ORGANIZATION'), (',', 'O'), ('Los', 'LOCATION'), ('Angeles', 'LOCATION')]
+
 import os
 import string
-
 import nltk
-from nltk import word_tokenize
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.tag import StanfordNERTagger
 from nltk.internals import find_jars_within_path
+import numpy as np
 import json
 import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
+
+def splitData(df):
+    msk = np.random.rand(len(df)) < 0.8
+    train = df[msk]
+    test = df[~msk]
+    return train, test
+
+def cleanFrame(df):
+    stop = stopwords.words('english')
+    indexes = []
+    for i in range(0, len(df['token'])):
+        text = df['token'][i]
+        text = text.lower()
+        if text in stop:
+            indexes.append(i)
+            continue
+        text = BeautifulSoup(text,"lxml").get_text()
+        text = "".join([ch for ch in text if ch not in string.punctuation])
+        if not text:
+            indexes.append(i)
+    df.drop(df.index[indexes],inplace=True)
+    return df
+
+def verticalizeTextItems(df):
+    rows = []
+    df.apply(lambda row: [rows.append([row['docid'], txt, index, row['occurence']]) for index, txt in enumerate(row.text)], axis=1)
+    df = pd.DataFrame(rows, columns=['docid','token','tokenid','occurence'])
+    return df
 
 def checkWithinRange(num,list):
     for x in list:
@@ -39,6 +67,37 @@ def assignProductLabel(row):
 def assignDummyProductLabel(row):
     return 'O'
 
+def addBlanknLines(data):
+    # Adding blank row after reach text item
+    prev_docid = ''
+    j=0
+    for i, row in data.iterrows():
+        curr_docid = row['docid']
+        if(i > 0 and i < len(data)-1 and curr_docid != prev_docid):
+            df = data[0:j]
+            df = df.append({"docid": "","token":"","tokenid":"","label":"","dummy":""},ignore_index=True)
+            df = df.append(data[j:])
+            data = df
+            j=j+1
+        prev_docid = curr_docid
+        j=j+1
+    return data
+
+def predictLabelStanford(test_data):
+    path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford-ner-2015-12-09'
+    # path_to_model = path_stanford + '\classifiers\english.all.3class.distsim.crf.ser.gz'
+    path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford.ner-model.products.gz'   #This is the model we trained on products data
+    path_to_jar = path_stanford + '\stanford-ner.jar'
+    st = StanfordNERTagger(path_to_model, path_to_jar)
+
+    # stanford_dir = st._stanford_jar.rpartition('\\')[0]
+
+    stanford_jars = find_jars_within_path(path_stanford)
+    st._stanford_jar = ';'.join(stanford_jars)
+    op = st.tag(test_data['token'][0:50])
+    print(op)
+    print(type(op))
+
 with open('training-annotated.json') as data_file:
     ann_textItems = json.load(data_file)
 
@@ -56,53 +115,26 @@ dsmb_textItems = dsmb_textItems.groupby('docid', as_index=False).agg({'occurence
 
 ann_textItems = pd.merge(ann_textItems, dsmb_textItems, on = 'docid')
 
-rows = []
-ann_textItems.apply(lambda row: [rows.append([row['docid'], txt, index, row['occurence']]) for index, txt in enumerate(row.text)], axis=1)
-ann_textItems_new = pd.DataFrame(rows, columns=['docid','token','tokenid','occurence'])
-ann_textItems_new['label']= ann_textItems_new.apply (lambda row: assignProductLabel (row),axis=1)
-ann_textItems_new['dummy']= ann_textItems_new.apply (lambda row: assignDummyProductLabel (row),axis=1)
-stop = stopwords.words('english')
-indexes = []
-for i in range(0, len(ann_textItems_new['token'])):
-    text = ann_textItems_new['token'][i]
-    text = text.lower()
-    if text in stop:
-        indexes.append(i)
-        continue
-    text = BeautifulSoup(text,"lxml").get_text()
-    text = "".join([ch for ch in text if ch not in string.punctuation])
-    if not text:
-        indexes.append(i)
-ann_textItems_new.drop(ann_textItems_new.index[indexes],inplace=True)
-stanford_train = ann_textItems_new[['token','label']]
-stanford_test = ann_textItems_new[['token','dummy']]
+train_textItems, test_textItems = splitData(ann_textItems)
 
-stanford_train.to_csv('ner_stanford_train_products', sep='\t', header=False , index=False)  #Training data for model
-stanford_test.to_csv('ner_stanford_test_products', sep='\t', header=False , index=False)    #dummy data testing on training set
+train_data = verticalizeTextItems(train_textItems)
+test_data = verticalizeTextItems(test_textItems)
 
-path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford-ner-2015-12-09'
-# path_to_model = path_stanford + '\classifiers\english.all.3class.distsim.crf.ser.gz'
-path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford.ner-model.products.gz'   #This is the model we trained on products data
-path_to_jar = path_stanford + '\stanford-ner.jar'
-st = StanfordNERTagger(path_to_model, path_to_jar)
+train_data = cleanFrame(train_data)
+test_data = cleanFrame(test_data)
 
-stanford_dir = st._stanford_jar.rpartition('\\')[0]
+train_data['label']= train_data.apply (lambda row: assignProductLabel (row),axis=1)
+test_data['label']= test_data.apply (lambda row: assignProductLabel (row),axis=1)
 
-stanford_jars = find_jars_within_path(path_stanford)
-st._stanford_jar = ';'.join(stanford_jars)
-print(st._stanford_jar)
-print(st.tag(nltk.word_tokenize(test_data['Value'][50])))
+# test_data = addBlanknLines(test_data)
 
+train_data = train_data[['token','label']]
+test_data = test_data[['docid','token','label']]
 
+# train_data.to_csv('ner_train_data', sep='\t', header=False , index=False)  #Training data for model
+# test_data.to_csv('ner_test_data', sep='\t', header=False , index=False)    #dummy data testing on training set
 
-
-
-
-
-
-
-
-
-
-
+#Prediction
+# test_data['label']= test_data.apply (lambda row: assignProductLabel (row),axis=1)
+predictLabelStanford(test_data)
 
