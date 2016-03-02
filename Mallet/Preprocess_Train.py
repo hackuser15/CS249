@@ -65,8 +65,6 @@ for i in range(0, len(ann_textItems_new['token'])):
 ann_textItems_new.drop(ann_textItems_new.index[indexes],inplace=True)
 ann_textItems_new = ann_textItems_new.reset_index(drop=True)
 
-ann_textItems_new.to_csv('abcd', sep=' ', header=False , index=True)  #Training data for model
-
 # Adding blank row after reach text item
 prev_docid = ''
 j=0
@@ -84,5 +82,5 @@ for i, row in ann_textItems_new.iterrows():
 stanford_train = ann_textItems_new[['token','label']]
 stanford_test = ann_textItems_new[['token','dummy']]
 
-stanford_train.to_csv('ner_stanford_train_product_new2', sep=' ', header=False , index=True)  #Training data for model
+stanford_train.to_csv('ner_stanford_train_product_new2', sep=' ', header=False , index=False)  #Training data for model
 stanford_test.to_csv('ner_stanford_test_product_new2', sep=' ', header=False , index=False)    #dummy data testing on training set
