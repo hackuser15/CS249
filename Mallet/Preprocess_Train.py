@@ -3,9 +3,9 @@ import json
 import pandas as pd
 import string
 from bs4 import BeautifulSoup
-
 from nltk.corpus import stopwords
-
+import warnings
+warnings.filterwarnings("ignore")
 
 def assignProductLabel(row):
     if(row['token'] in product_terms):
@@ -15,9 +15,9 @@ def assignProductLabel(row):
 def assignDummyProductLabel(row):
     return 'O'
 
-with open('/Users/avneet/Desktop/CS249/PROJECT/TrainingSet/training-annotated-text.json') as data_file:
+with open('D:\WINTER\Big_Data_Analytics_CS249\Project\Code\src\\training-annotated.json') as data_file:
     ann_textItems = json.load(data_file)
-dsmb_textItems = pd.read_csv('/Users/avneet/Desktop/CS249/PROJECT/TrainingSet/training-disambiguated-product-mentions.csv')
+dsmb_textItems = pd.read_csv('D:\WINTER\Big_Data_Analytics_CS249\Project\Code\src\\training-disambiguated-product-mentions.csv')
 dsmb_textItems = dsmb_textItems.drop('documents',1)
 dsmb_textItems = dsmb_textItems['id'].apply(lambda x: pd.Series(x.split(':')))
 dsmb_textItems.columns = ['docid', 'range']
@@ -43,7 +43,8 @@ for index, row in dsmb_textItems.iterrows():
         start, end = map(int,elem)
         #print(textItemId,"-",start,":",end)
         df = ann_textItems_new[ann_textItems_new['docid'] == textItemId][start:end+1]
-        l1 = list(df['token'])
+        # l1 = list(df['token'])
+        l1 = [x for x in list(df['token']) if not x.isdigit()]
         print(textItemId,":",l1)
         product_terms.update(l1[0:])
 
@@ -60,7 +61,7 @@ indexes = []
 for i in range(0, len(ann_textItems_new['token'])):
     text = ann_textItems_new['token'][i]
     text = text.lower()
-    if text in stop or text in string.punctuation:
+    if text in stop:
         indexes.append(i)
         continue
     text = BeautifulSoup(text,"lxml").get_text()
@@ -68,6 +69,8 @@ for i in range(0, len(ann_textItems_new['token'])):
     if not text:
         indexes.append(i)
 ann_textItems_new.drop(ann_textItems_new.index[indexes],inplace=True)
+stanford_train = ann_textItems_new[['token','label']]
+stanford_test = ann_textItems_new[['token','dummy']]
 
 stanford_train.to_csv('ner_stanford_train_product_new2', sep=' ', header=False , index=False)  #Training data for model
 stanford_test.to_csv('ner_stanford_test_product_new2', sep=' ', header=False , index=False)    #dummy data testing on training set
