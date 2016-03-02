@@ -37,6 +37,7 @@ def cleanFrame(df):
         if not text:
             indexes.append(i)
     df.drop(df.index[indexes],inplace=True)
+    df = df.reset_index(drop=True)
     return df
 
 def verticalizeTextItems(df):
@@ -88,15 +89,20 @@ def predictLabelStanford(test_data):
     # path_to_model = path_stanford + '\classifiers\english.all.3class.distsim.crf.ser.gz'
     path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford.ner-model.products.gz'   #This is the model we trained on products data
     path_to_jar = path_stanford + '\stanford-ner.jar'
-    st = StanfordNERTagger(path_to_model, path_to_jar)
 
-    # stanford_dir = st._stanford_jar.rpartition('\\')[0]
+    st = StanfordNERTagger(path_to_model, path_to_jar)
 
     stanford_jars = find_jars_within_path(path_stanford)
     st._stanford_jar = ';'.join(stanford_jars)
-    op = st.tag(test_data['token'][0:50])
-    print(op)
-    print(type(op))
+
+    prediction = pd.DataFrame(columns=['docid','token','pred_label'])
+    docs = pd.Series(test_data['docid'].values.ravel()).unique()
+    for doc in docs:
+        op = st.tag(test_data[test_data['docid']==doc]['token'])
+        op = pd.DataFrame(op, columns=['token','pred_label'])
+        op['docid'] = pd.Series([doc for x in range(len(op.index))], index=op.index)
+        prediction=prediction.append(op,ignore_index=True)
+    return prediction
 
 with open('training-annotated.json') as data_file:
     ann_textItems = json.load(data_file)
@@ -135,6 +141,5 @@ test_data = test_data[['docid','token','label']]
 # test_data.to_csv('ner_test_data', sep='\t', header=False , index=False)    #dummy data testing on training set
 
 #Prediction
-# test_data['label']= test_data.apply (lambda row: assignProductLabel (row),axis=1)
-predictLabelStanford(test_data)
-
+pred_data = predictLabelStanford(test_data)
+print(pred_data)
