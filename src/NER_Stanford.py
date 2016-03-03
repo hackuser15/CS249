@@ -95,14 +95,56 @@ def predictLabelStanford(test_data):
     stanford_jars = find_jars_within_path(path_stanford)
     st._stanford_jar = ';'.join(stanford_jars)
 
-    prediction = pd.DataFrame(columns=['docid','token','pred_label'])
+    prediction = pd.DataFrame(columns=['docid','token','tokenid','pred_label'])
     docs = pd.Series(test_data['docid'].values.ravel()).unique()
     for doc in docs:
         op = st.tag(test_data[test_data['docid']==doc]['token'])
         op = pd.DataFrame(op, columns=['token','pred_label'])
         op['docid'] = pd.Series([doc for x in range(len(op.index))], index=op.index)
+        op['tokenid'] = pd.Series([x for x in range(len(op.index))], index=op.index)
         prediction=prediction.append(op,ignore_index=True)
     return prediction
+
+def getProductOccurence(prediction):
+    final_list = pd.DataFrame(columns=['docid','occurences'])
+    text_index = 0
+    index_str="";
+    seperator ="-"
+    l = []
+    i = 0
+    prev_docid = ''
+    while(i < len(prediction['pred_label'])):
+        curr_docid = prediction['docid'][i]
+        label = prediction['pred_label'][i]
+        if(i>0 and curr_docid != prev_docid ):
+            final_list=processTextItem(l, prev_docid, final_list)
+            text_index = 0
+            l.clear()
+            i = i+1
+            prev_docid = curr_docid
+        elif(label == 'prod'):
+            start_index = prediction['tokenid'][i]
+            end_index = start_index
+            while(label == 'prod' and curr_docid == prev_docid):
+                prev_docid = curr_docid
+                i = i+1
+                curr_docid = prediction['docid'][i]
+                end_index+=1
+                text_index+=1
+                label = str(prediction['pred_label'][i])
+            l.append(str(start_index)+seperator+str(end_index-1))
+        elif(label == 'O'):
+            text_index +=1
+            i = i+1
+            prev_docid = curr_docid
+    final_list=processTextItem(l, prediction['docid'][i-1], final_list)
+    return final_list
+
+def processTextItem(l, textItemID, final_list):
+    if(len(l) > 0):
+        r = l[0]
+        final_list=final_list.append({"docid":textItemID,"occurences":r},ignore_index=True)
+    return final_list
 
 with open('training-annotated.json') as data_file:
     ann_textItems = json.load(data_file)
@@ -138,8 +180,9 @@ train_data = train_data[['token','label']]
 test_data = test_data[['docid','token','label']]
 
 # train_data.to_csv('ner_train_data', sep='\t', header=False , index=False)  #Training data for model
-# test_data.to_csv('ner_test_data', sep='\t', header=False , index=False)    #dummy data testing on training set
+test_data.to_csv('ner_test_data', sep='\t', header=False , index=False)    #dummy data testing on training set
 
 #Prediction
 pred_data = predictLabelStanford(test_data)
+pred_data = getProductOccurence(pred_data)
 print(pred_data)
