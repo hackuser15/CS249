@@ -101,7 +101,6 @@ def predictLabelStanford(test_data):
         op = st.tag(test_data[test_data['docid']==doc]['token'])
         op = pd.DataFrame(op, columns=['token','pred_label'])
         op['docid'] = pd.Series([doc for x in range(len(op.index))], index=op.index)
-        op['tokenid'] = pd.Series([x for x in range(len(op.index))], index=op.index)
         prediction=prediction.append(op,ignore_index=True)
     return prediction
 
