@@ -130,14 +130,14 @@ def getProductOccurence(prediction):
                 product += " "+token
                 i = i+1
                 if(i==len(prediction)):
-                    l.append(str(start_index)+seperator+str(end_index))
+                    l.append(str(int(start_index))+seperator+str(int(end_index)))
                     lproduct.append(product)
                     break
                 curr_docid = prediction['docid'][i]
                 end_index = prediction['tokenid'][i] if (curr_docid == prev_docid or end_index == 0) else prediction['tokenid'][i-1]+1
                 label = str(prediction['pred_label'][i])
                 token = prediction['token'][i]
-            l.append(str(start_index)+seperator+str(end_index-1))
+            l.append(str(int(start_index))+seperator+str(int(end_index-1)))
             lproduct.append(product)
         elif(label == 'O'):
             i = i+1
@@ -194,4 +194,4 @@ pred_data = predictLabelStanford(test_data)
 pred_data.to_csv('ner_pred_data', sep='\t', header=False , index=False)    #dummy data testing on training set
 pred_data = getProductOccurence(pred_data)
 print(pred_data)
-# pred_data['product'].to_csv('ner_pred_data', sep='\t', header=False , index=False)    #dummy data testing on training set
+pred_data.to_csv('ner_pred_data', sep='\t', header=False , index=False)    #dummy data testing on training set
