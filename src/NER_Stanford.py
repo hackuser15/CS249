@@ -84,10 +84,16 @@ def addBlanknLines(data):
         j=j+1
     return data
 
-def predictLabelStanford(test_data):
+def predictLabelStanford(test_data, preTrained = False):
     path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford-ner-2015-12-09'
     # path_to_model = path_stanford + '\classifiers\english.all.3class.distsim.crf.ser.gz'
-    path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford.ner-model.products.gz'   #This is the model we trained on products data
+    if(preTrained == True):
+        #This is path to stanford pre trained model
+        path_to_model = path_stanford + '\classifiers\english.all.3class.distsim.crf.ser.gz'
+    else:
+        #This is the model we trained on products data
+        path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\stanford.ner-model.products.gz'
+
     path_to_jar = path_stanford + '\stanford-ner.jar'
 
     st = StanfordNERTagger(path_to_model, path_to_jar)
@@ -120,12 +126,12 @@ def getProductOccurence(prediction):
             final_list=processTextItem(l, lproduct, prev_docid, final_list)
             l.clear()
             lproduct.clear()
-        if(label == 'prod'):
+        if(label in ('prod' ,'ORGANIZATION')):
             start_index = prediction['tokenid'][i]
             product = ''
             token = prediction['token'][i]
             end_index = start_index
-            while((label == 'prod' and curr_docid == prev_docid) or start_index == end_index):
+            while((label in ('prod' ,'ORGANIZATION') and curr_docid == prev_docid) or start_index == end_index):
                 prev_docid = curr_docid
                 product += " "+token
                 i = i+1
@@ -139,7 +145,7 @@ def getProductOccurence(prediction):
                 token = prediction['token'][i]
             l.append(str(int(start_index))+seperator+str(int(end_index-1)))
             lproduct.append(product)
-        elif(label == 'O'):
+        else:
             i = i+1
             prev_docid = curr_docid
     final_list=processTextItem(l, lproduct, prediction['docid'][i-1], final_list)
@@ -189,9 +195,14 @@ test_data = test_data[['docid','token','label']]
 # train_data.to_csv('ner_train_data', sep='\t', header=False , index=False)  #Training data for model
 test_data.to_csv('ner_test_data', sep='\t', header=False , index=False)
 
-#Prediction
+#Prediction on our trained model
 pred_data = predictLabelStanford(test_data)
-pred_data.to_csv('ner_pred_data', sep='\t', header=False , index=False)    #dummy data testing on training set
 pred_data = getProductOccurence(pred_data)
 print(pred_data)
-pred_data.to_csv('ner_pred_data', sep='\t', header=False , index=False)    #dummy data testing on training set
+pred_data.to_csv('ner_pred_data', sep='\t', header=False , index=False)
+
+#Prediction on stanford  pretrained model
+pred_data = predictLabelStanford(test_data, True)
+pred_data = getProductOccurence(pred_data)
+print(pred_data)
+pred_data.to_csv('ner_pred_data_preTrained', sep='\t', header=False , index=False)
