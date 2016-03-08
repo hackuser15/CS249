@@ -57,12 +57,13 @@ for index, row in dsmb_textItems.iterrows():
         start, end = map(int,elem)
         #print(textItemId,"-",start,":",end)
         df = ann_textItems_new[ann_textItems_new['docid'] == textItemId][start:end+1]
-        l1 = list(df['token'])
+        #l1 = list(df['token'])
+        l1 = [x for x in list(df['token']) if not x.isdigit()]
         #print(textItemId,":",l1)
         product_terms.update(l1[0:])
 
 #print(ann_textItems_new)
-
+product_terms.remove("'s")
 
 
 ann_textItems_new['label']= ann_textItems_new.apply (lambda row: assignProductLabel (row),axis=1)
@@ -88,7 +89,19 @@ for i in range(0, len(ann_textItems_new['token'])):
         indexes.append(i)
 ann_textItems_new.drop(ann_textItems_new.index[indexes],inplace=True)
 
-#Data cleaning - test Will change indices?
+# #Data cleaning - test Will change indices?
+# test_indexes = []
+# for i in range(0, len(test_ann_textItems_new['token'])):
+#     text = test_ann_textItems_new['token'][i]
+#     text = text.lower()
+#     if text in stop or text in string.punctuation:
+#         indexes.append(i)
+#         continue
+#     #text = BeautifulSoup(text,"lxml").get_text()
+#     text = "".join([ch for ch in text if ch not in string.punctuation])
+#     if not text:
+#         test_indexes.append(i)
+# test_ann_textItems_new.drop(test_ann_textItems_new.index[test_indexes],inplace=True)
 
 #Inserting blank lines for training data
 prev_docid = ''
