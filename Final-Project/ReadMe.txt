@@ -23,7 +23,8 @@ PyStruct
 
 
 Steps for Pystruct
-1. Run the PyStructSSVM.py from the Source directory.
-2. The result file(PyStructOutput.csv) will be generated in the Dataset folder.
+1. Run the PyStructSSVM.py file from the Source directory.
+2. Run the Generate_output_PyStruct.py file from the Source directory.
+
 
 Steps for Stanford NER

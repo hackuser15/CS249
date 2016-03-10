@@ -12,9 +12,9 @@ warnings.filterwarnings("ignore")
 
 dir = os.path.dirname(__file__)
 train_anon_file = os.path.join(dir, os.pardir,'Dataset/training-annotated-text.json')
-train_filename = os.path.join(dir, os.pardir,'Dataset/mallet_train_product')
-test_filename = os.path.join(dir, os.pardir,'Dataset/mallet_test_product')
-output_filename = os.path.join(dir, os.pardir,'Dataset/PyStructOutput.csv')
+train_filename = os.path.join(dir, os.pardir,'Intermediate_files/mallet_train_product')
+test_filename = os.path.join(dir, os.pardir,'Intermediate_files/mallet_test_product')
+output_filename = os.path.join(dir, os.pardir,'Intermediate_files/PyStructOutput.csv')
 stop = stopwords.words('english')
 
 ### Feature vector creation for input to PyStruct algorithm
@@ -100,7 +100,7 @@ sentences = cleanData(list)
 #                        workers=num_workers,size=num_features,window = context,
 #                         min_count=min_word_count)
 # We are using two models --> 249MF2,249MF4
-model_name = "249MF2"
+model_name = "249MF4"
 model = Word2Vec.load(model_name)
 
 ### Read the training and testing file and make feature vectors for tokens in them using Word2Vec model
@@ -176,4 +176,4 @@ for row in range(0,len(res)):
                 k = k + 1
 cols = [1,2]
 test_output.to_csv(output_filename,sep=' ',columns=cols,index=False,header=False,skip_blank_lines=False)
-print("Result file generated in the Dataset folder (PyStructOutput.csv)")
+print("Intermediate file generated in the Intermediate folder (PyStructOutput.csv)")
