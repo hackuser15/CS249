@@ -8,8 +8,12 @@ jars = [
     "../Lib/lucene-core-3.6.1.jar",
     "../Lib/apache-lucene.jar"
     ]
+
+
 for jar in jars:
-	sys.path.append(jar)
+    sys.path.append(jar)
+
+print sys.path
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer
@@ -19,7 +23,6 @@ from org.apache.lucene.search import IndexSearcher
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
 import csv
-
 
 
 query_list = []
@@ -32,7 +35,8 @@ for row in data:
 
 # 1. open the index
 analyzer = StandardAnalyzer(Version.LUCENE_36)
-index = SimpleFSDirectory(File("../Dataset/INDEX_FINAL1"))
+#index = SimpleFSDirectory(File("../Dataset/INDEX_FINAL1"))
+index = SimpleFSDirectory(File("F:/INDEX_FINAL1/INDEX_FINAL1"))
 reader = IndexReader.open(index)
 n_docs = reader.numDocs()
 print("Index contains %d documents." % n_docs)

@@ -1,3 +1,6 @@
+
+# This file perfroms pre-processing of data to create data in the format required by MAllet and Pystruct
+
 import json
 
 import pandas as pd
@@ -7,7 +10,13 @@ import csv
 from nltk.corpus import stopwords
 
 import warnings
+import os
 warnings.filterwarnings("ignore")
+
+
+dir = os.path.dirname(__file__)
+train_filename = os.path.join(dir, os.pardir,'Dataset/mallet_train_product')
+test_filename = os.path.join(dir, os.pardir,'Dataset/mallet_test_product')
 
 
 def assignProductLabel(row):
