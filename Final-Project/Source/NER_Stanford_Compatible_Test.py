@@ -1,6 +1,5 @@
 import os
 import string
-import nltk
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.tag import StanfordNERTagger
