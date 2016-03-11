@@ -176,20 +176,22 @@ test_data = cleanHTMLTags(test_data)
 
 test_data = test_data[['docid','token']]
 
+path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\StanfordNER\\'
+
 #Prediction on our trained model
 pred_data = predictLabelStanford(test_data)
 pred_data = getProductOccurence(pred_data)
 print(pred_data)
 pred_occurences = pred_data[['docid','occurences']]
-pred_products = pred_data['product']
-pred_occurences.to_csv('ner_stanford_pred_comp_occurences', sep=' ', header=False , index=False)
-pred_products.to_csv('ner_stanford_pred_comp_products', sep=' ', header=False , index=False)
+pred_products = pred_data[['product']]
+pred_occurences.to_csv(path_stanford + 'ner_stanford_pred_comp_occurences', sep=' ', header=False , index=False)
+pred_products.to_csv(path_stanford + 'ner_stanford_pred_comp_products', sep='|', header=False , index=False)
 
 # Prediction on stanford pretrained model
 pred_data = predictLabelStanford(test_data, preTrained=True)
 pred_data = getProductOccurence(pred_data)
 print(pred_data)
 pred_occurences = pred_data[['docid','occurences']]
-pred_products = pred_data['product']
-pred_occurences.to_csv('ner_stanford_pred_compPreTrain_occurences', sep=' ', header=False , index=False)
-pred_products.to_csv('ner_stanford_pred_compPreTrain_products', sep=' ', header=False , index=False)
+pred_products = pred_data[['product']]
+pred_occurences.to_csv(path_stanford+'ner_stanford_pred_compPreTrain_occurences', sep=' ', header=False , index=False)
+pred_products.to_csv(path_stanford+'ner_stanford_pred_compPreTrain_products', sep='|', header=False , index=False)
