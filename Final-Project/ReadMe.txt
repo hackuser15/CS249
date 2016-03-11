@@ -50,7 +50,6 @@ Steps for Pystruct
 
 
 Steps for Stanford NER
-Steps to run Stanford NER Model
 1. Run the NER_Stanford_Compatible_Train.py file from the Source directory.
 2. Run the train_stanford_ner.bat file in StanfordNER directory to train the stanford NER model (If not windows, run the command java -cp ".;stanford-ner.jar;.\lib\*" edu.stanford.nlp.ie.crf.CRFClassifier -prop my_ner.prop
 )
