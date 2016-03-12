@@ -25,18 +25,18 @@ PyStruct
 Steps to run Mallet Model:
 
 1. Run the preprocess_data.py file from the Source directory. (Mallet jar is already provided)
-2. Run the train_model.sh shell script from Scripts directory to train the mallet model.
-3. Run the test_model.sh script to create the test results.
+2. Run the train_model.sh shell script from Scripts directory to train the mallet model(Please comment and uncomment as per OS).
+3. Run the test_model.sh script to create the test results(Please comment and uncomment as per OS).
 4. Run the Generate_output.py script present in the Source folder.
-4. Copy query.py present in Source directory to the Jython home dir
+4. Copy query.py present present in Source directory to the Jython home dir
 5. In query.py, modify the code lines number 8 & 9 by specifying the the absolute path as per your system to Final-Project/Lib/apache-lucene.jar &
    and Final-Project/Lib/lucene-core-3.6.1.jar
-    Also  Modify following lines in query.py
+    Also  Modify following lines in query.py(as the path needs to be given based on your local filesystem)
     30 - Provide absolute path of this folder's Intermediate_files/output_query.csv
     39 - Provide absolute path of INDEX1(Lucene index) as downloaded from Dropbox as per link provided above
     70 - Provide absolute path of this project's Intermediate_files/prod_ids.csv
 7. cd(change directory) to Jython Home & execute from the Terminal/command prompt : java -jar jython.jar query.py
-8. Run the Final_output_generation.sh script present in Final-Project/Scripts/Final_output_generation.sh .
+8. Run the Final_output_generation.sh script present in Final-Project/Scripts/Final_output_generation.sh
 9. Compare the results generated in Intermediate_files/Final_result.csv with the ones in testing-disambiguated-product-mentions.xlsx present in Dataset folder.
 
 
@@ -55,11 +55,10 @@ Steps for Pystruct model:
 
 
 
-Steps for Stanford NER:
+Steps for Stanford NER(Needs Java version 1.8 or higher):
 
 1. Run the NER_Stanford_Compatible_Train.py file from the Source directory.
-2. Run the train_stanford_ner.bat file in StanfordNER directory to train the stanford NER model (If not windows, run the command java -cp ".;stanford-ner.jar;.\lib\*" edu.stanford.nlp.ie.crf.CRFClassifier -prop my_ner.prop
-)
+2. Run the shell script present in Scripts folder: stanford_train_model.sh(Please comment and uncomment as per OS).
 3. Run the NER_Stanford_Compatible_Test.py in source directory to create the test results.
 4. Copy query.py to the Jython home dir
 5. In query.py, modify the code lines number 13 & 14 by specifying the the absolute path as per your system to Final-Project/Lib/apache-lucene.jar &

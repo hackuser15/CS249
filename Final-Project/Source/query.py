@@ -13,7 +13,7 @@ jars = [
 for jar in jars:
     sys.path.append(jar)
 
-print sys.path
+print(sys.path)
 
 from java.io import File
 from org.apache.lucene.analysis.standard import StandardAnalyzer

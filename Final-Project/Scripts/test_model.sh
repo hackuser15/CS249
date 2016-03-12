@@ -2,8 +2,10 @@ modelFile="../Model/CRF_malllet.crf"
 
 tmpTestingFile="../Intermediate_files/mallet_test_product"
 
+#FOR MAC
 #MalletClassPath="/Users/avneet/Desktop/CS249/mallet-2.0.8RC3/class:/Users/avneet/Desktop/CS249/mallet-2.0.8RC3/lib/mallet-deps.jar"
 
+#FOR WINDOWS
 MalletClassPath="../Lib/mallet-2.0.7/class;../Lib/mallet-2.0.7/lib/mallet-deps.jar"
 
 if [ "$OS" == "Linux" ]; then MalletClassPath="../mallet-2.0.7/class:../mallet-2.0.7/lib/mallet-deps.jar"; fi

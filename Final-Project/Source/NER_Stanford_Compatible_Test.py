@@ -85,16 +85,16 @@ def addBlanknLines(data):
     return data
 
 def predictLabelStanford(test_data):
-    path_lib = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Lib\StanfordNER\\'
+    path_lib = "../Lib/StanfordNER/"
 
-    path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Model\stanford.ner.model.products.gz'
+    path_to_model = '../Model/stanford.ner.model.products.gz'
 
-    path_to_jar = path_lib + '\stanford-ner.jar'
+    path_to_jar = path_lib+'stanford-ner.jar'
 
     st = StanfordNERTagger(path_to_model, path_to_jar)
 
     stanford_jars = find_jars_within_path(path_lib)
-    st._stanford_jar = ';'.join(stanford_jars)
+    st._stanford_jar = os.pathsep.join(stanford_jars)
 
     prediction = pd.DataFrame(columns=['docid','token','tokenid','pred_label'])
     docs = pd.Series(test_data['docid'].values.ravel()).unique()
@@ -154,8 +154,8 @@ def processTextItem(l, lproduct, textItemID, final_list):
         final_list=final_list.append(op, ignore_index=True)
     return final_list
 
-path_dataset = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Dataset'
-with open(path_dataset+ r'\testing-annotated-text.json') as data_file:
+path_dataset = "../Dataset/"
+with open(path_dataset+'testing-annotated-text.json') as data_file:
     test_data = json.load(data_file)
 
 test_data = pd.DataFrame(list(test_data['TextItem'].items()))
@@ -168,7 +168,7 @@ test_data = cleanHTMLTags(test_data)
 
 test_data = test_data[['docid','token']]
 
-path_intermediate = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Intermediate_files\\'
+path_intermediate = "../Intermediate_files/"
 
 #Prediction on our trained model
 pred_data = predictLabelStanford(test_data)

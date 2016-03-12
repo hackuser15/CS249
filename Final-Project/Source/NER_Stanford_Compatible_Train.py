@@ -24,7 +24,7 @@ def cleanFrame(df):
         text = df['token'][i]
         text = text.replace('\n','')
         text = text.lower()
-        text = BeautifulSoup(text,"lxml").get_text()
+        #text = BeautifulSoup(text,"lxml").get_text()
         text = "".join([ch for ch in text if ch not in string.punctuation])
         if not text:
             indexes.append(i)
@@ -77,8 +77,12 @@ def addBlanknLines(data):
         j=j+1
     return data
 
-path_dataset = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Dataset'
-with open(path_dataset+ r'\training-annotated-text.json') as data_file:
+# path_dataset = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Dataset'
+# with open(path_dataset+ r'\training-annotated-text.json') as data_file:
+#     train_data = json.load(data_file)
+
+
+with open('../Dataset/training-annotated-text.json') as data_file:
     train_data = json.load(data_file)
 
 train_data = pd.DataFrame(list(train_data['TextItem'].items()))
@@ -87,7 +91,9 @@ train_data.columns = ['docid', 'text']
 
 train_data = verticalizeTextItems(train_data)
 
-dsmb_textItems = pd.read_csv(path_dataset+ r'\training-disambiguated-product-mentions.csv')
+#dsmb_textItems = pd.read_csv(path_dataset+ r'\training-disambiguated-product-mentions.csv')
+dsmb_textItems = pd.read_csv('../Dataset/training-disambiguated-product-mentions.csv')
+
 dsmb_textItems.columns = ['id', 'documents']
 dsmb_textItems = dsmb_textItems.drop('documents',1)
 dsmb_textItems = dsmb_textItems['id'].apply(lambda x: pd.Series(x.split(':')))
@@ -114,5 +120,7 @@ train_data = cleanFrame(train_data)
 
 train_data = train_data[['token','label']]
 
-path_intermediate = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Intermediate_files\\'
+#path_intermediate = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Intermediate_files\\'
+path_intermediate = "../Intermediate_files/"
+
 train_data.to_csv(path_intermediate + 'ner_stanford_train_data', sep='\t', header=False , index=False)  #Training data for model
