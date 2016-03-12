@@ -22,7 +22,8 @@ PyStruct
    pip install pystruct
 2. Additional instructions to install PyStruct(for different OS') is given at: https://pystruct.github.io/installation.html
 
-Steps to run Mallet Model
+Steps to run Mallet Model:
+
 1. Run the mallet_preprocess_data.py file from the Source directory. (Mallet jar is already provided)
 2. Run the train_model.sh shell script from Scripts directory to train the mallet model.
 3. Run the test_model.sh script to create the test results.
@@ -36,7 +37,9 @@ Steps to run Mallet Model
 9. Compare the results with the ones in testing-disambiguated-product-mentions.xlsx present in Dataset folder.
 
 
-Steps for Pystruct
+Steps for Pystruct model:
+
+1. Run the preprocess_data.py file from the Source directory.
 1. Run the PyStructSSVM.py file from the Source directory.
 2. Run the Generate_output_PyStruct.py file from the Source directory.
 4. Copy query.py to the Jython home dir
@@ -49,7 +52,8 @@ Steps for Pystruct
 
 
 
-Steps for Stanford NER
+Steps for Stanford NER:
+
 1. Run the NER_Stanford_Compatible_Train.py file from the Source directory.
 2. Run the train_stanford_ner.bat file in StanfordNER directory to train the stanford NER model (If not windows, run the command java -cp ".;stanford-ner.jar;.\lib\*" edu.stanford.nlp.ie.crf.CRFClassifier -prop my_ner.prop
 )
