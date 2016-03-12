@@ -28,7 +28,7 @@ Steps to run Mallet Model:
 2. Run the train_model.sh shell script from Scripts directory to train the mallet model.
 3. Run the test_model.sh script to create the test results.
 4. Run the Generate_output.py script present in the Source folder.
-4. Copy query.py to the Jython home dir
+4. Copy query.py present in Source directory to the Jython home dir
 5. In query.py, modify the code lines number 13 & 14 by specifying the the absolute path as per your system to Final-Project/Lib/apache-lucene.jar &
    and Final-Project/Lib/lucene-core-3.6.1.jar
 6. Modify lines 35 & 75 to give absolute file path up to the Intermediate_files directory in this project.
