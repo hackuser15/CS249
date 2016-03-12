@@ -24,7 +24,7 @@ def cleanFrame(df):
         text = df['token'][i]
         text = text.replace('\n','')
         text = text.lower()
-        #text = BeautifulSoup(text,"lxml").get_text()
+        text = BeautifulSoup(text,"lxml").get_text()
         text = "".join([ch for ch in text if ch not in string.punctuation])
         if not text:
             indexes.append(i)
