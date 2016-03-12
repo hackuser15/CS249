@@ -37,7 +37,7 @@ Steps to run Mallet Model:
     70 - Provide absolute path of this project's Intermediate_files/prod_ids.csv
 7. cd(change directory) to Jython Home & execute from the Terminal/command prompt : java -jar jython.jar query.py
 8. Run the Final_output_generation.sh script present in Final-Project/Scripts/Final_output_generation.sh .
-9. Compare the results with the ones in testing-disambiguated-product-mentions.xlsx present in Dataset folder.
+9. Compare the results generated in Intermediate_files/Final_result.csv with the ones in testing-disambiguated-product-mentions.xlsx present in Dataset folder.
 
 
 Steps for Pystruct model:
