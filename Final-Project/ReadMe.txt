@@ -29,10 +29,13 @@ Steps to run Mallet Model:
 3. Run the test_model.sh script to create the test results.
 4. Run the Generate_output.py script present in the Source folder.
 4. Copy query.py present in Source directory to the Jython home dir
-5. In query.py, modify the code lines number 13 & 14 by specifying the the absolute path as per your system to Final-Project/Lib/apache-lucene.jar &
+5. In query.py, modify the code lines number 8 & 9 by specifying the the absolute path as per your system to Final-Project/Lib/apache-lucene.jar &
    and Final-Project/Lib/lucene-core-3.6.1.jar
-6. Modify lines 35 & 75 to give absolute file path up to the Intermediate_files directory in this project.
-7. cd to Jython Home & execute : java -jar jython.jar query.py
+    Also  Modify following lines in query.py
+    30 - Provide absolute path of this folder's Intermediate_files/output_query.csv
+    39 - Provide absolute path of INDEX1(Lucene index) as downloaded from Dropbox as per link provided above
+    70 - Provide absolute path of this project's Intermediate_files/prod_ids.csv
+7. cd(change directory) to Jython Home & execute from the Terminal/command prompt : java -jar jython.jar query.py
 8. Run the Final_output_generation.sh script present in Final-Project/Scripts/Final_output_generation.sh .
 9. Compare the results with the ones in testing-disambiguated-product-mentions.xlsx present in Dataset folder.
 
