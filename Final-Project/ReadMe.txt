@@ -24,7 +24,7 @@ PyStruct
 
 Steps to run Mallet Model:
 
-1. Run the mallet_preprocess_data.py file from the Source directory. (Mallet jar is already provided)
+1. Run the preprocess_data.py file from the Source directory. (Mallet jar is already provided)
 2. Run the train_model.sh shell script from Scripts directory to train the mallet model.
 3. Run the test_model.sh script to create the test results.
 4. Run the Generate_output.py script present in the Source folder.
