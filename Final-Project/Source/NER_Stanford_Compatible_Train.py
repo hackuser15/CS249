@@ -19,15 +19,11 @@ def splitData(df):
 
 def cleanFrame(df):
     df['token']=df['token'].replace(to_replace='\n', value='', regex = True)
-    stop = stopwords.words('english')
     indexes = []
     for i in range(0, len(df['token'])):
         text = df['token'][i]
         text = text.replace('\n','')
         text = text.lower()
-        # if text in stop:
-        #     indexes.append(i)
-        #     continue
         text = BeautifulSoup(text,"lxml").get_text()
         text = "".join([ch for ch in text if ch not in string.punctuation])
         if not text:
@@ -98,8 +94,6 @@ dsmb_textItems = dsmb_textItems['id'].apply(lambda x: pd.Series(x.split(':')))
 dsmb_textItems.columns = ['docid', 'occurence']
 dsmb_textItems = dsmb_textItems.groupby('docid', as_index=False).agg({'occurence': lambda x: list(x)})
 
-# train_data = pd.merge(train_data, dsmb_textItems, on = 'docid')
-
 # Creating set of products
 product_terms = set()
 for index, row in dsmb_textItems.iterrows():
@@ -118,9 +112,7 @@ train_data['label']= train_data.apply (lambda row: assignProductLabel (row, prod
 
 train_data = cleanFrame(train_data)
 
-# test_data = addBlanknLines(test_data)
-
 train_data = train_data[['token','label']]
 
-path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\StanfordNER\\'
-train_data.to_csv(path_stanford + 'ner_stanford_comp_train_data', sep='\t', header=False , index=False)  #Training data for model
+path_intermediate = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Intermediate_files\\'
+train_data.to_csv(path_intermediate + 'ner_stanford_train_data', sep='\t', header=False , index=False)  #Training data for model

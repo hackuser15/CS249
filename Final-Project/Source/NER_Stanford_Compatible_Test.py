@@ -17,14 +17,10 @@ def splitData(df):
     return train, test
 
 def cleanFrame(df):
-    stop = stopwords.words('english')
     indexes = []
     for i in range(0, len(df['token'])):
         text = df['token'][i]
         text = text.lower()
-        # if text in stop:
-        #     indexes.append(i)
-        #     continue
         text = BeautifulSoup(text,"lxml").get_text()
         text = "".join([ch for ch in text if ch not in string.punctuation])
         if not text:
@@ -88,19 +84,16 @@ def addBlanknLines(data):
         j=j+1
     return data
 
-def predictLabelStanford(test_data, preTrained = False):
-    path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\StanfordNER\\'
+def predictLabelStanford(test_data):
+    path_lib = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Lib\StanfordNER\\'
 
-    if(preTrained == True):
-        path_to_model = path_stanford + '\english.all.3class.distsim.crf.ser.gz'
-    else:
-        path_to_model = path_stanford + '\stanford.ner.model.products.gz'
+    path_to_model = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Model\stanford.ner.model.products.gz'
 
-    path_to_jar = path_stanford + '\stanford-ner.jar'
+    path_to_jar = path_lib + '\stanford-ner.jar'
 
     st = StanfordNERTagger(path_to_model, path_to_jar)
 
-    stanford_jars = find_jars_within_path(path_stanford)
+    stanford_jars = find_jars_within_path(path_lib)
     st._stanford_jar = ';'.join(stanford_jars)
 
     prediction = pd.DataFrame(columns=['docid','token','tokenid','pred_label'])
@@ -175,7 +168,7 @@ test_data = cleanHTMLTags(test_data)
 
 test_data = test_data[['docid','token']]
 
-path_stanford = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\StanfordNER\\'
+path_intermediate = os.path.abspath(os.path.join(os.getcwd(), os.pardir)) + '\Intermediate_files\\'
 
 #Prediction on our trained model
 pred_data = predictLabelStanford(test_data)
@@ -183,14 +176,5 @@ pred_data = getProductOccurence(pred_data)
 print(pred_data)
 pred_occurences = pred_data[['docid','occurences']]
 pred_products = pred_data[['product']]
-pred_occurences.to_csv(path_stanford + 'ner_stanford_pred_comp_occurences', sep=' ', header=False , index=False)
-pred_products.to_csv(path_stanford + 'ner_stanford_pred_comp_products', sep='|', header=False , index=False)
-
-# Prediction on stanford pretrained model
-pred_data = predictLabelStanford(test_data, preTrained=True)
-pred_data = getProductOccurence(pred_data)
-print(pred_data)
-pred_occurences = pred_data[['docid','occurences']]
-pred_products = pred_data[['product']]
-pred_occurences.to_csv(path_stanford+'ner_stanford_pred_compPreTrain_occurences', sep=' ', header=False , index=False)
-pred_products.to_csv(path_stanford+'ner_stanford_pred_compPreTrain_products', sep='|', header=False , index=False)
+pred_occurences.to_csv(path_intermediate + 'output_textids.csv', sep=' ', header=False , index=False)
+pred_products.to_csv(path_intermediate + 'output_query.csv', sep='|', header=False , index=False)
