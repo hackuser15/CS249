@@ -36,7 +36,7 @@ for row in data:
 # 1. open the index
 analyzer = StandardAnalyzer(Version.LUCENE_36)
 #index = SimpleFSDirectory(File("../Dataset/INDEX_FINAL1"))
-index = SimpleFSDirectory(File("F:/INDEX_FINAL1/INDEX_FINAL1"))
+index = SimpleFSDirectory(File("../Dataset/INDEX_FINAL1"))
 reader = IndexReader.open(index)
 n_docs = reader.numDocs()
 print("Index contains %d documents." % n_docs)

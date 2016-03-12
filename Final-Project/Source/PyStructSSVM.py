@@ -72,7 +72,7 @@ def cleanData(list):
     for text in list:
         text = " ".join(text)
         text = text.lower()
-        text = BeautifulSoup(text,"lxml").get_text()
+        #text = BeautifulSoup(text,"lxml").get_text()
         text = "".join([ch for ch in text if ch not in string.punctuation])
         tokens = nltk.word_tokenize(text)
         cleaned = []

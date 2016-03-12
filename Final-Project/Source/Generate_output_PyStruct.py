@@ -10,7 +10,7 @@ def processTextItem(l,textItemID,tokenStr):
     if(len(l) > 0):
         r = l[0]
         s = token_str
-        final_list.append(textItemID+":"+r)
+        final_list.append(str(textItemID)+":"+str(r))
         token_list.append(s)
 
 # with open('/Users/avneet/Desktop/CS249/Dataset/testing-annotated-text.json') as data_file:
@@ -59,13 +59,13 @@ while(i < len(test_labels['label'])):
             i = i+1
             label = str(test_labels['label'][i])
         #l.append(str(start_index)+seperator+str(end_index-1)) - Modifying logic to include word right after product mention
-        final_index = end_index-1
-        if(label !='nan'):   #New logic of including prod+1 token
-            token = str(test_labels['token'][i])
-            token_str+=token
-            final_index = end_index
+        #final_index = end_index-1
+        # if(label !='nan'):   #New logic of including prod+1 token
+        #     token = str(test_labels['token'][i])
+        #     token_str+=token
+        #     final_index = end_index
 
-        l.append(str(start_index)+seperator+str(final_index))
+        l.append(str(start_index)+seperator+str(end_index))
         processTextItem(l, test_ids['docid'][i-1], token_str)
         #l.clear()
         l = []
