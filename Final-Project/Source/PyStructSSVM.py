@@ -14,7 +14,9 @@ dir = os.path.dirname(__file__)
 train_anon_file = os.path.join(dir, os.pardir,'Dataset/training-annotated-text.json')
 train_filename = os.path.join(dir, os.pardir,'Intermediate_files/mallet_train_product')
 test_filename = os.path.join(dir, os.pardir,'Intermediate_files/mallet_test_product')
+test_ids = os.path.join(dir, os.pardir,'Intermediate_files/mallet_test_ids')
 output_filename = os.path.join(dir, os.pardir,'Intermediate_files/PyStructOutput.csv')
+model_name = os.path.join(dir, os.pardir,'Model/249MF2') #Model/249MF4
 stop = stopwords.words('english')
 
 ### Feature vector creation for input to PyStruct algorithm
@@ -100,7 +102,7 @@ sentences = cleanData(list)
 #                        workers=num_workers,size=num_features,window = context,
 #                         min_count=min_word_count)
 # We are using two models --> 249MF2,249MF4
-model_name = "249MF4"
+#model_name = "249MF4"
 model = Word2Vec.load(model_name)
 
 ### Read the training and testing file and make feature vectors for tokens in them using Word2Vec model
@@ -116,9 +118,10 @@ y_train.fillna(0, inplace=True)
 X_train.fillna('separator', inplace=True)
 y_train = y_train.astype(int)
 testfile = pd.read_csv(test_filename,sep=' ',header=None,skip_blank_lines=False)
-item_id1 = testfile[0]
-X_test1 = testfile[1]
-y_test1 = testfile[2]
+testfileids = pd.read_csv(test_ids,sep=' ',header=None,skip_blank_lines=False)
+item_id1 = testfileids[0]
+X_test1 = testfile[0]
+y_test1 = testfile[1]
 y_test = y_test1.replace(to_replace='prod', value=1)
 y_test = y_test.replace(to_replace='O', value=0)
 y_test = y_test.fillna(0)
